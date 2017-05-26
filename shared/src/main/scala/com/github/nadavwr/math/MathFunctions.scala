@@ -1,8 +1,8 @@
-package com.github.nadavwr
+package com.github.nadavwr.math
 
 import scala.math._
 
-package object math {
+trait MathFunctions {
   implicit class NumericExt[N : Numeric](n: N) {
     private val numeric = implicitly[Numeric[N]]
     import numeric._
@@ -19,5 +19,7 @@ package object math {
 
   def acosh(x: Double): Double =
     log(x + sqrt(pow(x, 2) - 1))
+
+  val π: Double = scala.math.Pi
 }
 

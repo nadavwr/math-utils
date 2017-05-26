@@ -4,27 +4,28 @@ val Scala_2_12 = "2.12.2"
 val Scala_2_11 = "2.11.11"
 
 def crossAlias(aliasName: String, commandName: String, projectNames: String*): Command =
-  BasicCommands.newAlias(aliasName, (projectNames.map { projectName =>
+  BasicCommands.newAlias(aliasName, projectNames.map { projectName =>
     s""";++$Scala_2_12
        |;${projectName}JVM/$commandName
        |;++$Scala_2_11
        |;${projectName}JVM/$commandName
        |;${projectName}Native/$commandName
      """.stripMargin
-  }.mkString))
+  }.mkString)
 
 def forallAlias(aliasName: String, commandName: String, projectNames: String*): Command =
-  BasicCommands.newAlias(aliasName, (projectNames.map { projectName =>
+  BasicCommands.newAlias(aliasName, projectNames.map { projectName =>
     s""";${projectName}JVM/$commandName
        |;${projectName}Native/$commandName
     """.stripMargin
-  }.mkString))
+  }.mkString)
 
 lazy val commonSettings = Def.settings(
-  scalaVersion := "2.11.8",
+  scalaVersion := Scala_2_11,
   organization := "com.github.nadavwr",
   publishArtifact in (Compile, packageDoc) := false,
-  licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+  licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+  scalacOptions += "-feature"
 )
 
 lazy val unpublished = Def.settings(
@@ -40,6 +41,7 @@ lazy val mathUtils = crossProject(JVMPlatform, NativePlatform)
     moduleName := "math-utils"
   )
   .jvmSettings(
+    libraryDependencies += "net.java.dev.jna" % "jna" % "4.4.0",
     test := (run in Compile).toTask("").value
   )
   .nativeSettings(
@@ -50,13 +52,13 @@ lazy val mathUtils = crossProject(JVMPlatform, NativePlatform)
 lazy val mathUtilsJVM = mathUtils.jvm
 lazy val mathUtilsNative = mathUtils.native
 
-lazy val mathUtilsRoot = (project in file("."))
-  .aggregate(mathUtilsJVM, mathUtilsNative)
-  .settings(
-    commonSettings,
-    unpublished,
-    commands += crossAlias("publishLocal", "publishLocal", "mathUtils"),
-    commands += crossAlias("publish", "publish", "mathUtils"),
-    commands += forallAlias("clean", "clean", "mathUtils")
-  )
-
+lazy val mathUtilsRoot =
+  Project("mathUtils", file("."))
+    .aggregate(mathUtilsJVM, mathUtilsNative)
+    .settings(
+      commonSettings,
+      unpublished,
+      commands += crossAlias("publishLocal", "publishLocal", "mathUtils"),
+      commands += crossAlias("publish", "publish", "mathUtils"),
+      commands += forallAlias("clean", "clean", "mathUtils")
+    )
