@@ -1,8 +1,12 @@
 package com.github.nadavwr.math
 
-import scala.scalanative.native.Alloc
 import scala.language.implicitConversions
+import scala.scalanative.native._
 
 trait Shims {
-  implicit def alloc: Alloc = Alloc.system
+  // TODO: add zone to makeshift fixture on native
+  implicit def zone: Zone = new Zone {
+    override def alloc(size: CSize): Ptr[Byte] =
+      stdlib.malloc(size)
+  }
 }

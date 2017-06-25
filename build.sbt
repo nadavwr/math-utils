@@ -46,7 +46,7 @@ lazy val mathUtils = crossProject(JVMPlatform, NativePlatform)
     libraryDependencies += "com.github.jnr" % "jnr-ffi" % "2.1.6"
   )
   .nativeSettings(
-    libraryDependencies += "com.github.nadavwr" %%% "libffi-scala-native" % "0.4.0-SNAPSHOT"
+    libraryDependencies += "com.github.nadavwr" %%% "libffi-scala-native" % "0.4.0"
   )
 lazy val mathUtilsJVM = mathUtils.jvm
 lazy val mathUtilsNative = mathUtils.native
@@ -59,7 +59,7 @@ lazy val mathUtilsTest =
       commonSettings,
       unpublished,
       moduleName := "math-utils-test",
-      libraryDependencies += "com.github.nadavwr" %%% "makeshift" % "0.2.0-SNAPSHOT",
+      libraryDependencies += "com.github.nadavwr" %%% "makeshift" % "0.2.0",
       test := { (run in Compile).toTask("").value }
     )
     .dependsOn(mathUtils)
@@ -78,4 +78,3 @@ lazy val mathUtilsRoot =
       commands += forallAlias("test", "test", "mathUtilsTest"),
       commands += forallAlias("clean", "clean", "mathUtils", "mathUtilsTest")
     )
-
